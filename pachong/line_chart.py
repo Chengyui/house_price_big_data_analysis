@@ -4,6 +4,8 @@
 
 import pymongo
 import pandas as pd
+import numpy as np
+import sklearn
 from pyecharts.charts import Map,Geo
 from pyecharts import options as opts
 import pyecharts.options as opts
@@ -13,14 +15,15 @@ from pyecharts.charts import Line
 
 # 将在 v1.1.0 中更改
 from pyecharts.commons.utils import JsCode
+from sklearn.linear_model import LinearRegression,LogisticRegression
 
 from webserver import send2browser
 
 def flagjudge(flag,date,houseprice_list):
     if flag:
         return opts.MarkPointOpts(data=[
-            opts.MarkPointItem(name="自定义标记点", coord=[date[11], houseprice_list[11]],
-                               value=houseprice_list[11],symbol_size=80)])
+            opts.MarkPointItem(name="自定义标记点", coord=[date[12], houseprice_list[12]],
+                               value=houseprice_list[12],symbol_size=80)])
     else:
         return None
 
@@ -46,40 +49,16 @@ def draw_line(location,new_houseprice_list,second_houseprice_list,flag):
         "2022-4",
         "2022-5"
     ]
+    if flag:
+        date = date+["2022-6"]
     title_choice = ["{}地区房价月走势".format(location),"{}地区六月房价预测".format(location)]
     (
         Line(init_opts=opts.InitOpts(width="1400px", height="700px"))
             .add_xaxis(
-            xaxis_data=[
-                "2021-6",
-                "2021-7",
-                "2021-8",
-                "2021-9",
-                "2021-10",
-                "2021-11",
-                "2021-12",
-                "2022-1",
-                "2022-2",
-                "2022-3",
-                "2022-4",
-                "2022-5"
-            ]
+            xaxis_data=date
         )
             .extend_axis(
-            xaxis_data=[
-                "2021-6",
-                "2021-7",
-                "2021-8",
-                "2021-9",
-                "2021-10",
-                "2021-11",
-                "2021-12",
-                "2022-1",
-                "2022-2",
-                "2022-3",
-                "2022-4",
-                "2022-5"
-            ],
+            xaxis_data=date,
             xaxis=opts.AxisOpts(
                 type_="category",
                 axistick_opts=opts.AxisTickOpts(is_align_with_label=True),
@@ -155,7 +134,9 @@ def draw_county(county_table,county_name,opt):
     for i in range(0,12):
         new_houseprice_list.append(county_data["historical_data"][0][i]["new_price"])
         second_houseprice_list.append(county_data["historical_data"][0][i]["second_hand_price"])
-
+    if opt:
+        new_houseprice_list =  new_houseprice_list+[predict(new_houseprice_list)]
+        second_houseprice_list = second_houseprice_list+[predict(second_houseprice_list)]
     draw_line(county_name, new_houseprice_list, second_houseprice_list,opt)
 
 def draw_city(city_table,city_name,opt):
@@ -168,17 +149,23 @@ def draw_city(city_table,city_name,opt):
     for i in range(0,12):
         new_houseprice_list.append(city_data["historical_data"][0][i]["new_price"])
         second_houseprice_list.append(city_data["historical_data"][0][i]["second_hand_price"])
+    if opt:
+        new_houseprice_list = new_houseprice_list + [predict(new_houseprice_list)]
+        second_houseprice_list = second_houseprice_list + [predict(second_houseprice_list)]
 
     draw_line(city_name, new_houseprice_list, second_houseprice_list,opt)
 
 
 def predict(price_list):
-    num = 0
-    for i in price_list:
-        if i != 0 :
-            num = num + 1
-        sum = sum + i
-    return sum/num
+    x_axis = np.array(range(1,13)).reshape(-1,1)
+    price_list = np.array(price_list).reshape(-1, 1)
+
+    # 拟合
+    reg = LinearRegression()
+    reg.fit(x_axis, price_list)
+    a = reg.coef_[0][0]  # 系数
+    b = reg.intercept_[0]  # 截距
+    return int(a*13+b)
 
 
 def line_chart(opt):
