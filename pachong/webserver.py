@@ -9,7 +9,7 @@ def send2browser(filename):
     server_html.bind(('localhost', 8080))
 
     server_html.listen(10)
-
+    print("http://localhost:8080")
     while True:
         conn, addr = server_html.accept()
         msg = conn.recv(1024 * 12)

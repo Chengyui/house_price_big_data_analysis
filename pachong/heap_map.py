@@ -5,11 +5,16 @@ import pymongo
 import pandas as pd
 from pyecharts.charts import Map,Geo
 from pyecharts import options as opts
+from pyecharts.commons.utils import JsCode
 
 from webserver import send2browser
 
 
 def draw_heapmap_by_month(data,month):
+    js_formatter = """function (params) {
+              console.log(params);
+          }"""
+
     city_list = []
     new_price_list = []
     for city in data['name']:
@@ -21,7 +26,7 @@ def draw_heapmap_by_month(data,month):
     china_city = (
         Map(init_opts=opts.InitOpts(width="1400px", height="700px"))
             .add(
-            "",
+            "房价（元/㎡）",
             data_city,
             "china-cities",
             label_opts=opts.LabelOpts(is_show=False),
@@ -37,12 +42,13 @@ def draw_heapmap_by_month(data,month):
                     {"max": 4999, "min": 0, "label": "1000-4999", "color": "#F5A9A9"},
                 ],
                 is_show=True,
+
             )
 
         )
-            .render("2022年{}月大陆地区房价热力图.html".format(month))
+            .render("result/2022年{}月大陆地区房价热力图.html".format(month))
     )
-    send2browser("2022年{}月大陆地区房价热力图.html".format(month))
+    send2browser("result/2022年{}月大陆地区房价热力图.html".format(month))
 def heap_map():
     # 连接数据库
     client = pymongo.MongoClient('localhost', 27017)

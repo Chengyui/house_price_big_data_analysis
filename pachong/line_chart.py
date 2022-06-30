@@ -120,9 +120,9 @@ def draw_line(location,new_houseprice_list,second_houseprice_list,flag):
                 max_=int(max(second_houseprice_list+new_houseprice_list)*1.05),
             ),
         )
-            .render("{}地区房价月走势.html".format(location))
+            .render("result/{}地区房价月走势.html".format(location))
     )
-    send2browser("{}地区房价月走势.html".format(location))
+    send2browser("result/{}地区房价月走势.html".format(location))
 def draw_county(county_table,county_name,opt):
     # county_name = "上海静安区"
     county_data = []

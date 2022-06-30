@@ -59,11 +59,11 @@ def draw_bar(city_name,date,new_price_list,second_hand_price):
             .set_series_opts(label_opts=opts.LabelOpts(position="inside",font_size=10))
             # .set_series_opts(label_opts=opts.LabelOpts(position="bottom"))
             #
-            .render("{}地区房价增长柱状图.html".format(city_name))
+            .render("result/{}地区房价增长柱状图.html".format(city_name))
     )
 
 
-    send2browser("{}地区房价增长柱状图.html".format(city_name))
+    send2browser("result/{}地区房价增长柱状图.html".format(city_name))
 
 
 def draw_county(county_table,county_name):
