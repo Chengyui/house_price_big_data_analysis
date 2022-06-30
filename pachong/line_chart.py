@@ -17,6 +17,7 @@ from pyecharts.charts import Line
 from pyecharts.commons.utils import JsCode
 from sklearn.linear_model import LinearRegression,LogisticRegression
 
+from predict import GM11
 from webserver import send2browser
 
 def flagjudge(flag,date,houseprice_list):
@@ -29,8 +30,6 @@ def flagjudge(flag,date,houseprice_list):
 
 def draw_line(location,new_houseprice_list,second_houseprice_list,flag):
 
-    new_houseprice_list.reverse()
-    second_houseprice_list.reverse()
     js_formatter = """function (params) {
             console.log(params);
             return '房价  ' + params.value + (params.seriesData.length ? '：' + params.seriesData[0].data : '');
@@ -134,9 +133,11 @@ def draw_county(county_table,county_name,opt):
     for i in range(0,12):
         new_houseprice_list.append(county_data["historical_data"][0][i]["new_price"])
         second_houseprice_list.append(county_data["historical_data"][0][i]["second_hand_price"])
+    new_houseprice_list.reverse()
+    second_houseprice_list.reverse()
     if opt:
-        new_houseprice_list =  [predict(new_houseprice_list)]+new_houseprice_list
-        second_houseprice_list = [predict(second_houseprice_list)]+second_houseprice_list
+        new_houseprice_list = new_houseprice_list+[predict(new_houseprice_list)]
+        second_houseprice_list = second_houseprice_list+[predict(second_houseprice_list)]
     draw_line(county_name, new_houseprice_list, second_houseprice_list,opt)
 
 def draw_city(city_table,city_name,opt):
@@ -149,22 +150,26 @@ def draw_city(city_table,city_name,opt):
     for i in range(0,12):
         new_houseprice_list.append(city_data["historical_data"][0][i]["new_price"])
         second_houseprice_list.append(city_data["historical_data"][0][i]["second_hand_price"])
+    new_houseprice_list.reverse()
+    second_houseprice_list.reverse()
     if opt:
-        new_houseprice_list = [predict(new_houseprice_list)] + new_houseprice_list
-        second_houseprice_list = [predict(second_houseprice_list)] + second_houseprice_list
+        new_houseprice_list = new_houseprice_list+[predict(new_houseprice_list)]
+        second_houseprice_list = second_houseprice_list+[predict(second_houseprice_list)]
     draw_line(city_name, new_houseprice_list, second_houseprice_list,opt)
 
 
 def predict(price_list):
-    x_axis = np.array(range(1,13)).reshape(-1,1)
-    price_list = np.array(price_list).reshape(-1, 1)
-
-    # 拟合
-    reg = LinearRegression()
-    reg.fit(x_axis, price_list)
-    a = reg.coef_[0][0]  # 系数
-    b = reg.intercept_[0]  # 截距
-    return int(a*13+b)
+    price_list = np.array(price_list)
+    #
+    # # 拟合
+    # reg = LinearRegression()
+    # reg.fit(x_axis, price_list)
+    # a = reg.coef_[0][0]  # 系数
+    # b = reg.intercept_[0]  # 截距
+    x = price_list # 输入数据
+    result = GM11(x, 1)
+    # print(result)
+    return int(result['predict']['value'][0])
     # return int(np.array(price_list).mean())
 
 
