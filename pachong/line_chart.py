@@ -135,8 +135,8 @@ def draw_county(county_table,county_name,opt):
         new_houseprice_list.append(county_data["historical_data"][0][i]["new_price"])
         second_houseprice_list.append(county_data["historical_data"][0][i]["second_hand_price"])
     if opt:
-        new_houseprice_list =  new_houseprice_list+[predict(new_houseprice_list)]
-        second_houseprice_list = second_houseprice_list+[predict(second_houseprice_list)]
+        new_houseprice_list =  [predict(new_houseprice_list)]+new_houseprice_list
+        second_houseprice_list = [predict(second_houseprice_list)]+second_houseprice_list
     draw_line(county_name, new_houseprice_list, second_houseprice_list,opt)
 
 def draw_city(city_table,city_name,opt):
@@ -150,9 +150,8 @@ def draw_city(city_table,city_name,opt):
         new_houseprice_list.append(city_data["historical_data"][0][i]["new_price"])
         second_houseprice_list.append(city_data["historical_data"][0][i]["second_hand_price"])
     if opt:
-        new_houseprice_list = new_houseprice_list + [predict(new_houseprice_list)]
-        second_houseprice_list = second_houseprice_list + [predict(second_houseprice_list)]
-
+        new_houseprice_list = [predict(new_houseprice_list)] + new_houseprice_list
+        second_houseprice_list = [predict(second_houseprice_list)] + second_houseprice_list
     draw_line(city_name, new_houseprice_list, second_houseprice_list,opt)
 
 
@@ -166,6 +165,7 @@ def predict(price_list):
     a = reg.coef_[0][0]  # 系数
     b = reg.intercept_[0]  # 截距
     return int(a*13+b)
+    # return int(np.array(price_list).mean())
 
 
 def line_chart(opt):
