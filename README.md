@@ -2,4 +2,5 @@
 This project can automatically generate House Price Charts of China using Pyecharts. The data is collected by web crawler on www.gotohui.com
 
 
-using python main.py to get what you want!
+Launch the server and open retrieve.html directly
+
