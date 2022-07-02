@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--    <link rel="icon" href="imgs/owl.ico" type="image/x-icon">-->
+    <!--    <link rel="shortcut icon" href="imgs/owl.ico" type="image/x-icon">-->
+    <meta charset="UTF-8">
+    <title>中国城市房价数据分析</title>
+    <link rel="stylesheet" href="retrieve.css"/>
+</head>
+
+<body>
+
+<form id="login-box" method="post" enctype="application/x-www-form-urlencoded" action="">
+    <input id="city" type="text" name="city" placeholder="城市名称">
+     <select id="city_or_con" name="city_or_con">
+        <option>市</option>
+        <option>区县</option>
+    </select>
+    <br><br>
+<select id="graph_type" name="graph_type">
+        <option>柱状图</option>
+        <option>热力图</option>
+        <option>折线图</option>
+    </select>
+    <input id="month" type="text" name="month" placeholder="月份" > <br><br>
+
+
+    <br>
+    <button type="button" , onclick="retrieve()">生成</button>
+</form>
+
+<script>
+
+    var resJSON = "";
+
+    var retrieve = function () {
+        let url = "http://localhost:8080";
+        var request = new XMLHttpRequest();
+        request.open('POST', url, true);
+        request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        let city = document.getElementById("city").value;
+        let graph_type = document.getElementById("graph_type").value;
+        let month = document.getElementById("month").value;
+        let city_or_con = document.getElementById("city_or_con").value;
+        let json = "{\"city\":\"" + city + "\",\"graph_type\":\"" + graph_type + "\",\"month\":\"" + month + "\",\"city_or_con\":\""+ city_or_con +"\"}";
+        console.log("json=" + json)
+        request.send(json);
+        window.location.href = "http://localhost:8081";
+        // request.onreadystatechange = function () {
+        //     if (request.readyState === 4) {
+        //         if (request.status === 200) {
+        //             resJSON = request.responseText;
+        //             let jmpURL = JSON.stringify(jsonObj).jumpURL;
+        //             console.log("jmpURL=" + jmpURL);
+        //             window.location.href = "http://localhost:8081";
+        //         }
+        //     }
+        // }
+    }
+
+</script>
+
+</body>
+
+</html>
+

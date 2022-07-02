@@ -57,4 +57,3 @@ if __name__ == "__main__":
     print('真实值:', y)
     print('预测值:', predict)
     print(result)
-
