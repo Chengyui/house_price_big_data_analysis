@@ -17,6 +17,7 @@ from pyecharts.charts import Line
 from pyecharts.commons.utils import JsCode
 from sklearn.linear_model import LinearRegression,LogisticRegression
 
+from data_process import data_process
 from predict import GM11
 from webserver import send2browser
 
@@ -152,6 +153,8 @@ def draw_city(city_table,city_name,opt):
         second_houseprice_list.append(city_data["historical_data"][0][i]["second_hand_price"])
     new_houseprice_list.reverse()
     second_houseprice_list.reverse()
+    data_process(new_houseprice_list)
+    data_process(second_houseprice_list)
     if opt:
         new_houseprice_list = new_houseprice_list+[predict(new_houseprice_list)]
         second_houseprice_list = second_houseprice_list+[predict(second_houseprice_list)]
