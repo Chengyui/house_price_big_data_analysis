@@ -36,7 +36,7 @@ def draw_heapmap_by_month(data, year, month):
             #      data_prov_city,
             #      "晋中")
             .set_global_opts(
-            title_opts=opts.TitleOpts(title="{}年{}月大陆地区房价热力图.html".format(year,month)),
+            title_opts=opts.TitleOpts(title="{}年{}月大陆地区房价热力图(部分地区暂无数据)".format(year,month)),
             visualmap_opts=opts.VisualMapOpts(
                 is_piecewise=True,
                 pieces=[

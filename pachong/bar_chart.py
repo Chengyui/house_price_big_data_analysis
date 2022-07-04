@@ -70,6 +70,12 @@ def draw_county(county_table, county_name):
     county_data = []
     county_data = pd.DataFrame(list(county_table.find({"name": "{}".format(county_name)})))
 
+    # 检测到数据缺失 报错
+    print(county_data["historical_data"][0])
+    if len(county_data["historical_data"][0]) < 12:
+        send2browser("error.html")
+        return
+
     new_houseprice_list = list()
     second_houseprice_list = list()
     date = list()
@@ -95,8 +101,14 @@ def draw_county(county_table, county_name):
 
 def draw_city(city_table, county_name):
     # county_name = "上海静安区"
-    county_data = []
-    county_data = pd.DataFrame(list(city_table.find({"name": "{}".format(county_name)})))
+    city_data = []
+    city_data = pd.DataFrame(list(city_table.find({"name": "{}".format(county_name)})))
+
+    # 检测到数据缺失 报错
+    print(city_data["historical_data"][0])
+    if len(city_data["historical_data"][0]) < 12:
+        send2browser("error.html")
+        return
 
     new_houseprice_list = list()
     second_houseprice_list = list()
@@ -106,8 +118,8 @@ def draw_city(city_table, county_name):
     new_houseprice_list = list()
     second_houseprice_list = list()
     for i in range(0, 13):
-        new_houseprice_list.append(county_data["historical_data"][0][i]["new_price"])
-        second_houseprice_list.append(county_data["historical_data"][0][i]["second_hand_price"])
+        new_houseprice_list.append(city_data["historical_data"][0][i]["new_price"])
+        second_houseprice_list.append(city_data["historical_data"][0][i]["second_hand_price"])
     new_houseprice_list.reverse()
     second_houseprice_list.reverse()
     data_process(new_houseprice_list)
@@ -117,7 +129,7 @@ def draw_city(city_table, county_name):
     for i in range(0, 12):
         rate1.append(round((new_houseprice_list[i + 1] - new_houseprice_list[i]) / new_houseprice_list[i],5))
         rate2.append(round((second_houseprice_list[i + 1] - second_houseprice_list[i]) / second_houseprice_list[i],5))
-        date.append(county_data["historical_data"][0][i]["date"])
+        date.append(city_data["historical_data"][0][i]["date"])
     draw_bar(county_name, date, rate1, rate2)
 
 

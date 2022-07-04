@@ -130,9 +130,9 @@ def draw_county(county_table, county_name, opt):
     county_data = []
     county_data = pd.DataFrame(list(county_table.find({"name": "{}".format(county_name)})))
     print(county_data["historical_data"][0])
-    # if len(county_data["historical_data"][0])<12:
-    #     send2browser("error.html")
-    #     return
+    if len(county_data["historical_data"][0])<12:
+        send2browser("error.html")
+        return
     new_houseprice_list = list()
     second_houseprice_list = list()
     # try:
@@ -156,6 +156,11 @@ def draw_city(city_table, city_name, opt):
     city_data = []
     city_data = pd.DataFrame(list(city_table.find({"name": "{}".format(city_name)})))
 
+    # 检测到数据缺失 报错
+    print(city_data["historical_data"][0])
+    if len(city_data["historical_data"][0]) < 12:
+        send2browser("error.html")
+        return
     new_houseprice_list = list()
     second_houseprice_list = list()
     for i in range(0, 12):
