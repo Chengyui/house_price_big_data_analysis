@@ -33,7 +33,7 @@ def flagjudge(flag, date, houseprice_list):
 def draw_line(location, new_houseprice_list, second_houseprice_list, flag):
     js_formatter = """function (params) {
             console.log(params);
-            return '房价  ' + params.value + (params.seriesData.length ? '：' + params.seriesData[0].data : '');
+            return params.value + (params.seriesData.length ? '：' + '新房 '+params.seriesData[0].data[1] + ' 二手房 ' +params.seriesData[1].data[1] : '');
         }"""
     date = [
         "2021-6",
@@ -51,7 +51,7 @@ def draw_line(location, new_houseprice_list, second_houseprice_list, flag):
     ]
     if flag:
         date = date + ["2022-6"]
-    title_choice = ["{}地区房价月走势".format(location), "{}地区六月房价预测".format(location)]
+    title_choice = ["{}地区房价月走势".format(location), "{}地区房价月走势图（预测）".format(location)]
     (
         Line(init_opts=opts.InitOpts(width="1400px", height="700px"))
             .add_xaxis(
@@ -59,16 +59,16 @@ def draw_line(location, new_houseprice_list, second_houseprice_list, flag):
         )
             .extend_axis(
             xaxis_data=date,
-            xaxis=opts.AxisOpts(
-                type_="category",
-                axistick_opts=opts.AxisTickOpts(is_align_with_label=True),
-                axisline_opts=opts.AxisLineOpts(
-                    is_on_zero=False, linestyle_opts=opts.LineStyleOpts(color="#6e9ef1")
-                ),
-                axispointer_opts=opts.AxisPointerOpts(
-                    is_show=True, label=opts.LabelOpts(formatter=JsCode(js_formatter))
-                ),
-            ),
+            # xaxis=opts.AxisOpts(
+            #     type_="category",
+            #     axistick_opts=opts.AxisTickOpts(is_align_with_label=True),
+            #     # axisline_opts=opts.AxisLineOpts(
+            #     #     is_on_zero=False, linestyle_opts=opts.LineStyleOpts(color="#d14a61")
+            #     # ),
+            #     # axispointer_opts=opts.AxisPointerOpts(
+            #     #     is_show=True, label=opts.LabelOpts(formatter=JsCode(js_formatter),position="bottom")
+            #     # ),
+            # ),
         )
             .add_yaxis(
             series_name="新房",
@@ -103,10 +103,10 @@ def draw_line(location, new_houseprice_list, second_houseprice_list, flag):
                 type_="category",
                 axistick_opts=opts.AxisTickOpts(is_align_with_label=True),
                 axisline_opts=opts.AxisLineOpts(
-                    is_on_zero=False, linestyle_opts=opts.LineStyleOpts(color="#d14a61")
+                    is_on_zero=False, linestyle_opts=opts.LineStyleOpts(color="#2e3079")
                 ),
                 axispointer_opts=opts.AxisPointerOpts(
-                    is_show=True, label=opts.LabelOpts(formatter=JsCode(js_formatter))
+                    is_show=True, label=opts.LabelOpts(formatter=JsCode(js_formatter),position="top")
                 ),
 
             ),
@@ -129,14 +129,22 @@ def draw_county(county_table, county_name, opt):
     # county_name = "上海静安区"
     county_data = []
     county_data = pd.DataFrame(list(county_table.find({"name": "{}".format(county_name)})))
-
+    print(county_data["historical_data"][0])
+    # if len(county_data["historical_data"][0])<12:
+    #     send2browser("error.html")
+    #     return
     new_houseprice_list = list()
     second_houseprice_list = list()
+    # try:
     for i in range(0, 12):
         new_houseprice_list.append(county_data["historical_data"][0][i]["new_price"])
         second_houseprice_list.append(county_data["historical_data"][0][i]["second_hand_price"])
+    # except Exception as e:
+    #     send2browser("default.html")
     new_houseprice_list.reverse()
     second_houseprice_list.reverse()
+    data_process(new_houseprice_list)
+    data_process(second_houseprice_list)
     if opt:
         new_houseprice_list = new_houseprice_list + [predict(new_houseprice_list)]
         second_houseprice_list = second_houseprice_list + [predict(second_houseprice_list)]

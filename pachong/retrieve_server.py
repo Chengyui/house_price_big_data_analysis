@@ -26,21 +26,34 @@ class VliangServer(BaseHTTPRequestHandler):
         post_data = self.rfile.read(content_length).decode('utf-8')
         print(post_data)
         json_dict = json.loads(post_data)
-        city = json_dict["city"]
 
+        province = json_dict["province"]
+        city = json_dict["city"]
+        county = json_dict["county"]
         graph_type = json_dict["graph_type"]
+        city_or_con = json_dict["city_or_con"]
+
         if json_dict["month"] == "":
             month = 1
         else:
-            month = int(json_dict["month"])
-        city_or_con = json_dict["city_or_con"]
+            month = json_dict["month"]
+            print(month)
 
-        if graph_type == '热力图':
+        if graph_type == '0':
             gen_heap_map(month)
-        elif graph_type == '折线图':
-            gen_line_chart(_city=city, _flag=city_or_con)
-        elif graph_type == '柱状图':
-            gen_bar_chart(_city=city, _flag=city_or_con)
+        elif graph_type == '1':
+            if city_or_con == '市':
+                gen_line_chart(_city=city, _flag=city_or_con)
+            else:
+                try:
+                    gen_line_chart(_city=city + county, _flag=city_or_con)
+                except Exception as e:
+                    gen_line_chart(_city=county, _flag=city_or_con)
+        elif graph_type == '2':
+            if city_or_con == '市':
+                gen_bar_chart(_city=city, _flag=city_or_con)
+            else:
+                gen_bar_chart(_city=city + county, _flag=city_or_con)
 
         # self.send_response(200)
         # self.send_header('Content-type', 'text/html;charset=UTF-8')

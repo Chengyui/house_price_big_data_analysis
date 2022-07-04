@@ -6,21 +6,22 @@ import pandas as pd
 from pyecharts.charts import Map, Geo
 from pyecharts import options as opts
 from pyecharts.commons.utils import JsCode
-
+import random
 from webserver import send2browser
+import numpy as np
 
-
-def draw_heapmap_by_month(data, month):
+def draw_heapmap_by_month(data, year, month):
     js_formatter = """function (params) {
               console.log(params);
           }"""
-
+    # prov_city = ['长沙', '株洲', '湘潭', '衡阳']
+    # data_prov_city = [(i, random.randint(100, 200)) for i in prov_city]
     city_list = []
     new_price_list = []
     for city in data['name']:
         city_list.append(city)
     for new_price in data['historical_data']:
-        new_price_list.append(new_price[5 - month]['new_price'])
+        new_price_list.append(new_price[(5 - month+12) % 12]['new_price'])
     data_city = [(city, new_price) for city, new_price in zip(city_list, new_price_list)]
 
     china_city = (
@@ -31,8 +32,11 @@ def draw_heapmap_by_month(data, month):
             "china-cities",
             label_opts=opts.LabelOpts(is_show=False),
         )
+            # .add("",
+            #      data_prov_city,
+            #      "晋中")
             .set_global_opts(
-            title_opts=opts.TitleOpts(title="2022年{}月大陆地区房价热力图.html".format(month)),
+            title_opts=opts.TitleOpts(title="{}年{}月大陆地区房价热力图.html".format(year,month)),
             visualmap_opts=opts.VisualMapOpts(
                 is_piecewise=True,
                 pieces=[
@@ -46,9 +50,9 @@ def draw_heapmap_by_month(data, month):
             )
 
         )
-            .render("result/2022年{}月大陆地区房价热力图.html".format(month))
+            .render("result/{}年{}月大陆地区房价热力图.html".format(year,month))
     )
-    send2browser("result/2022年{}月大陆地区房价热力图.html".format(month))
+    send2browser("result/{}年{}月大陆地区房价热力图.html".format(year,month))
 
 
 def heap_map():
@@ -72,5 +76,7 @@ def gen_heap_map(_month):
     db = client['house_price']
     city_table = db['gotohui_city']
     data = pd.DataFrame(list(city_table.find()))
-    month = _month
-    draw_heapmap_by_month(data, int(month))
+    month = int(_month[5:7])
+    year = int(_month[0:4])
+    print(month,year)
+    draw_heapmap_by_month(data, year, month)
