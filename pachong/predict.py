@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-import matplotlib.pyplot as plt
-import pandas as pd
+#使用灰色预测对未来一个月房价进行预测
 import numpy as np
 
 

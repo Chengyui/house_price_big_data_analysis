@@ -1,3 +1,4 @@
+# 本地测试pyecharts自动生成图表
 from bar_chart import bar_chart
 from heap_map import heap_map
 from line_chart import line_chart

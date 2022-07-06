@@ -1,26 +1,21 @@
-# 市及县的房价走势图
+# 生成市及县的房价走势图及未来一个月的房价
 
 
 import pymongo
 import pandas as pd
 import numpy as np
-import sklearn
-from pyecharts.charts import Map, Geo
-from pyecharts import options as opts
-import pyecharts.options as opts
-from pyecharts.charts import Line
 import pyecharts.options as opts
 from pyecharts.charts import Line
 
 # 将在 v1.1.0 中更改
 from pyecharts.commons.utils import JsCode
-from sklearn.linear_model import LinearRegression, LogisticRegression
+
 
 from data_process import data_process
 from predict import GM11
 from webserver import send2browser
 
-
+# 预测模式下，对预测的房价进行自定义标记
 def flagjudge(flag, date, houseprice_list):
     if flag:
         return opts.MarkPointOpts(data=[
@@ -29,7 +24,7 @@ def flagjudge(flag, date, houseprice_list):
     else:
         return None
 
-
+# 使用pyecharts 接受输入数据画图并将图表传送到指定端口
 def draw_line(location, new_houseprice_list, second_houseprice_list, flag):
     js_formatter = """function (params) {
             console.log(params);
@@ -124,7 +119,7 @@ def draw_line(location, new_houseprice_list, second_houseprice_list, flag):
     )
     send2browser("result/{}地区房价月走势.html".format(location))
 
-
+# 接受数据表，查找指定区县的房价数据，调用画图函数
 def draw_county(county_table, county_name, opt):
     # county_name = "上海静安区"
     county_data = []
@@ -150,7 +145,7 @@ def draw_county(county_table, county_name, opt):
         second_houseprice_list = second_houseprice_list + [predict(second_houseprice_list)]
     draw_line(county_name, new_houseprice_list, second_houseprice_list, opt)
 
-
+# 接受数据表，查找指定地级市的房价数据，调用画图函数
 def draw_city(city_table, city_name, opt):
     # city_name = "上海"
     city_data = []
@@ -175,7 +170,7 @@ def draw_city(city_table, city_name, opt):
         second_houseprice_list = second_houseprice_list + [predict(second_houseprice_list)]
     draw_line(city_name, new_houseprice_list, second_houseprice_list, opt)
 
-
+# 调用GM11函数对未来一个月房价进行预测，返回预测值。
 def predict(price_list):
     price_list = np.array(price_list)
     #
@@ -205,7 +200,7 @@ def line_chart(opt):
     else:
         draw_county(county_table, city_name, opt)
 
-
+# 从前端接受到指定的城市或区县
 def gen_line_chart(_city: str, _flag: str, opt=1):
     client = pymongo.MongoClient('localhost', 27017)
     db = client['house_price']

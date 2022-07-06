@@ -1,15 +1,12 @@
-# 大陆房价热力图
+# 绘制最近12个月的大陆房价热力图
 
-# 导入相关模块
 import pymongo
 import pandas as pd
-from pyecharts.charts import Map, Geo
+from pyecharts.charts import Map
 from pyecharts import options as opts
-from pyecharts.commons.utils import JsCode
-import random
 from webserver import send2browser
-import numpy as np
 
+# 调用pyecharts 接受月份和数据表，进行数据处理并绘制热力图并传送到指定端口
 def draw_heapmap_by_month(data, year, month):
     js_formatter = """function (params) {
               console.log(params);
@@ -54,7 +51,6 @@ def draw_heapmap_by_month(data, year, month):
     )
     send2browser("result/{}年{}月大陆地区房价热力图.html".format(year,month))
 
-
 def heap_map():
     # 连接数据库
     client = pymongo.MongoClient('localhost', 27017)
@@ -69,7 +65,7 @@ def heap_map():
     print("请于localhost:8080端口查看")
     draw_heapmap_by_month(data, int(month))
 
-
+# 从前端接受月份数据，调用绘画函数
 def gen_heap_map(_month):
     # 连接数据库
     client = pymongo.MongoClient('localhost', 27017)

@@ -1,4 +1,4 @@
-# 市级或县区级柱状图
+# 绘画市级或县区级增长率柱状图
 
 
 import pyecharts.options as opts
@@ -29,7 +29,7 @@ Gallery 使用 pyecharts 1.0.0
 1、暂无
 """
 
-
+# 使用pyecharts接受城市房价增长率数据，画柱状图，并将图表放置于指定端口
 def draw_bar(city_name, date, new_price_list, second_hand_price):
     js_formatter = """function (params) {
                 console.log(params);
@@ -64,7 +64,7 @@ def draw_bar(city_name, date, new_price_list, second_hand_price):
     )
     send2browser("result/{}地区房价增长柱状图.html".format(city_name))
 
-
+# 接受区县数据表和区县名称，查找房价数据，计算增长率数据，调用绘画接口
 def draw_county(county_table, county_name):
     # county_name = "上海静安区"
     county_data = []
@@ -98,7 +98,7 @@ def draw_county(county_table, county_name):
         date.append(county_data["historical_data"][0][i]["date"])
     draw_bar(county_name, date, rate1, rate2)
 
-
+# 接受区县数据表和城市名称，查找房价数据，计算增长率数据，调用绘画接口
 def draw_city(city_table, county_name):
     # county_name = "上海静安区"
     city_data = []
@@ -146,7 +146,7 @@ def bar_chart():
     else:
         draw_county(county_table, city_name)
 
-
+# 前端调用此接口，输入城市名称，调用数据处理接口
 def gen_bar_chart(_city: str, _flag: str):
     client = pymongo.MongoClient('localhost', 27017)
     db = client['house_price']

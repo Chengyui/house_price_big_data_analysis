@@ -1,4 +1,4 @@
-#将list补全
+# 对空缺的数据进行填充，若发现数据全空，跳转到报错界面
 from webserver import send2browser
 
 

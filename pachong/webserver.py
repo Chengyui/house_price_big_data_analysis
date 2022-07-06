@@ -1,4 +1,4 @@
-# -*-coding:utf-8 -*-
+# 将指定的html文件放置到指定端口
 
 import socket
 import os
